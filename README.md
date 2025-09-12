@@ -15,7 +15,9 @@ db                  // in tên DB hiện tại
 ```
 ## Tạo collection + Insert (Create)
 // tạo collection (không bắt buộc, insert tự tạo collection)
+```javascript
 db.createCollection("products")
+```
 ```javascript
 // insert nhiều document mẫu
 db.products.insertMany([
