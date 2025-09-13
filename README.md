@@ -66,6 +66,27 @@ db.products.updateOne({ name: "Bún chả" }, { $set: { price: 35000, category: 
 
 // replace (thay toàn bộ document) — dùng cẩn thận: sẽ thay hết các field (nhớ giữ _id nếu cần)
 db.products.replaceOne({ name: "Phở bò" }, { name: "Phở bò", price: 45000, category: "food", spicy: true })
+
+```
+## Bảng tóm tắt các toán tử update trong MongoDB
+Toán tử	Chức năng	Ví dụ
+
+```$set ```
+“Trong MongoDB, khi update dữ liệu chúng ta phải dùng các toán tử.
+
+```$set``` để đổi giá trị một field,
+
+```$inc``` để tăng giảm số lượng,
+
+```$unset``` để xóa field,
+
+```$push``` và ```$addToSet``` để thêm phần tử vào mảng,
+
+```$pull``` để xóa khỏi mảng,
+
+$rename để đổi tên field,
+
+và $currentDate để cập nhật thời gian hiện tại.
 ```
 ## 5. Xóa (Delete)
 ```javascript
