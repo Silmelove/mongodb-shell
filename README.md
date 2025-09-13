@@ -84,10 +84,20 @@ Toán tử	Chức năng	Ví dụ
 
 ```$pull``` để xóa khỏi mảng,
 
-$rename để đổi tên field,
+``` $rename``` để đổi tên field,
+# 📌 Bảng tóm tắt các toán tử update trong MongoDB
 
-và $currentDate để cập nhật thời gian hiện tại.
-```
+| Toán tử       | Chức năng                                               | Ví dụ                                  |
+|---------------|---------------------------------------------------------|----------------------------------------|
+| **`$set`**    | Gán giá trị mới cho một field (tạo mới nếu chưa có)     | `{$set: { price: 16000 }}`             |
+| **`$inc`**    | Tăng/giảm giá trị số của một field                      | `{$inc: { stock: -1 }}`                |
+| **`$unset`**  | Xóa một field khỏi document                             | `{$unset: { discount: "" }}`           |
+| **`$push`**   | Thêm 1 phần tử vào cuối mảng                            | `{$push: { tags: "hot" }}`             |
+| **`$addToSet`** | Thêm vào mảng nếu chưa tồn tại (tránh trùng lặp)      | `{$addToSet: { tags: "sale" }}`        |
+| **`$pull`**   | Xóa phần tử khớp khỏi mảng                              | `{$pull: { tags: "old" }}`             |
+| **`$rename`** | Đổi tên field                                           | `{$rename: { price: "cost" }}`         |
+| **`$currentDate`** | Cập nhật thời gian hiện tại cho field dạng ngày/giờ | `{$currentDate: { lastModified: true }}` |
+
 ## 5. Xóa (Delete)
 ```javascript
 // xóa 1 document
