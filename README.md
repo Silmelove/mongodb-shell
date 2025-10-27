@@ -1,4 +1,5 @@
 # Learning Management System (LMS) - 5 Lớp Chính
+<img width="771" height="665" alt="image" src="https://github.com/user-attachments/assets/01a77c96-7511-4bb4-8339-9d49aabddceb" />
 
 ## Tổng Quan
 Dự án LMS được xây dựng bằng C++ với 3 lớp chính thể hiện đầy đủ các tính chất của Lập Trình Hướng Đối Tượng (OOP).
