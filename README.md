@@ -1,10 +1,19 @@
 # Learning Management System (LMS) - 5 Lớp Chính
-<img width="771" height="665" alt="image" src="https://github.com/user-attachments/assets/01a77c96-7511-4bb4-8339-9d49aabddceb" />
 
 ## Tổng Quan
-Dự án LMS được xây dựng bằng C++ với 3 lớp chính thể hiện đầy đủ các tính chất của Lập Trình Hướng Đối Tượng (OOP).
+Dự án LMS được xây dựng bằng C++ với 5 lớp chính thể hiện đầy đủ các tính chất của Lập Trình Hướng Đối Tượng (OOP).
 
-## 3 Lớp Chính
+## Thứ Tự Viết Code
+
+Khi viết code cho hệ thống LMS này, bạn nên viết theo **thứ tự phụ thuộc** từ lớp cơ sở đến lớp phức tạp:
+
+### **1. User (Lớp Cơ Sở)** - Viết đầu tiên
+### **2. Assignment (Lớp Nghiệp Vụ)** - Viết thứ hai  
+### **3. Student (Lớp Kế Thừa)** - Viết thứ ba
+### **4. Submission (Lớp Bài Nộp)** - Viết thứ tư
+### **5. Grade (Lớp Điểm Số)** - Viết cuối cùng
+
+## 5 Lớp Chính
 
 ### 1. **User** (Lớp Cơ Sở)
 
@@ -179,7 +188,296 @@ string User::generateUserID(const string& userType) {
 
 ---
 
-### 2. **Student** (Lớp Kế Thừa)
+### 2. **Assignment** (Lớp Nghiệp Vụ)
+
+#### Assignment.h
+```cpp
+#pragma once
+#include <string>
+#include <vector>
+#include <memory>
+#include <ctime>
+using namespace std;
+
+// Forward declaration
+class Submission;
+
+// Assignment class - Demonstrates ENCAPSULATION and COMPOSITION
+class Assignment {
+private:
+    string assignmentID;
+    string title;
+    string description;
+    string deadline;
+    vector<shared_ptr<Submission>> submissions;
+    bool isActive;
+    int credits;
+    double maxScore;
+
+public:
+    // Constructor - Demonstrates ENCAPSULATION
+    Assignment(const string& assignmentID, const string& title, 
+              const string& description, const string& deadline,
+              int credits = 3, double maxScore = 100.0);
+    
+    // Destructor
+    ~Assignment() = default;
+    
+    // Assignment management methods - Demonstrates ENCAPSULATION
+    void addSubmission(shared_ptr<Submission> submission);
+    bool isSubmissionLate(const string& submissionDate) const;
+    bool isDeadlinePassed() const;
+    vector<shared_ptr<Submission>> getLateSubmissions() const;
+    vector<shared_ptr<Submission>> getOnTimeSubmissions() const;
+    
+    // Getters - Demonstrates ENCAPSULATION
+    string getAssignmentID() const;
+    string getTitle() const;
+    string getDescription() const;
+    string getDeadline() const;
+    const vector<shared_ptr<Submission>>& getSubmissions() const;
+    bool getIsActive() const;
+    int getCredits() const;
+    double getMaxScore() const;
+    
+    // Setters - Demonstrates ENCAPSULATION
+    void setTitle(const string& newTitle);
+    void setDescription(const string& newDescription);
+    void setDeadline(const string& newDeadline);
+    void setIsActive(bool active);
+    void setCredits(int newCredits);
+    void setMaxScore(double newMaxScore);
+    
+    // Utility methods - Demonstrates ENCAPSULATION
+    void displayAssignment() const;
+    void displaySubmissions() const;
+    int getSubmissionCount() const;
+    bool hasStudentSubmitted(const string& studentID) const;
+    shared_ptr<Submission> getStudentSubmission(const string& studentID) const;
+    string getCurrentDate() const;
+    bool compareDates(const string& date1, const string& date2) const;
+    
+    // Static methods - Demonstrates STATIC MEMBERS
+    static shared_ptr<Assignment> createAssignment(const string& title, 
+                                                  const string& description, 
+                                                  const string& deadline);
+    
+private:
+    // Private helper methods - Demonstrates ENCAPSULATION
+    bool isValidDate(const string& date) const;
+    string formatDate(const string& date) const;
+};
+```
+
+#### Assignment.cpp
+```cpp
+#include "Assignment.h"
+#include "Submission.h"
+#include <iostream>
+#include <iomanip>
+#include <algorithm>
+#include <sstream>
+#define _CRT_SECURE_NO_WARNINGS
+using namespace std;
+
+// Constructor - Demonstrates ENCAPSULATION
+Assignment::Assignment(const string& assignmentID, const string& title, 
+                      const string& description, const string& deadline,
+                      int credits, double maxScore)
+    : assignmentID(assignmentID), title(title), description(description), 
+      deadline(deadline), isActive(true), credits(credits), maxScore(maxScore) {
+}
+
+// Assignment management methods - Demonstrates ENCAPSULATION
+void Assignment::addSubmission(shared_ptr<Submission> submission) {
+    if (submission == nullptr) {
+        cout << "Invalid submission." << endl;
+        return;
+    }
+    
+    submissions.push_back(submission);
+    cout << "Submission added successfully." << endl;
+}
+
+bool Assignment::isSubmissionLate(const string& submissionDate) const {
+    return submissionDate > deadline;
+}
+
+bool Assignment::isDeadlinePassed() const {
+    string currentDate = getCurrentDate();
+    return currentDate > deadline;
+}
+
+vector<shared_ptr<Submission>> Assignment::getLateSubmissions() const {
+    vector<shared_ptr<Submission>> lateSubmissions;
+    for (const auto& submission : submissions) {
+        if (submission->getIsLate()) {
+            lateSubmissions.push_back(submission);
+        }
+    }
+    return lateSubmissions;
+}
+
+vector<shared_ptr<Submission>> Assignment::getOnTimeSubmissions() const {
+    vector<shared_ptr<Submission>> onTimeSubmissions;
+    for (const auto& submission : submissions) {
+        if (!submission->getIsLate()) {
+            onTimeSubmissions.push_back(submission);
+        }
+    }
+    return onTimeSubmissions;
+}
+
+// Getters - Demonstrates ENCAPSULATION
+string Assignment::getAssignmentID() const {
+    return assignmentID;
+}
+
+string Assignment::getTitle() const {
+    return title;
+}
+
+string Assignment::getDescription() const {
+    return description;
+}
+
+string Assignment::getDeadline() const {
+    return deadline;
+}
+
+const vector<shared_ptr<Submission>>& Assignment::getSubmissions() const {
+    return submissions;
+}
+
+bool Assignment::getIsActive() const {
+    return isActive;
+}
+
+int Assignment::getCredits() const {
+    return credits;
+}
+
+double Assignment::getMaxScore() const {
+    return maxScore;
+}
+
+// Setters - Demonstrates ENCAPSULATION
+void Assignment::setTitle(const string& newTitle) {
+    title = newTitle;
+    cout << "Assignment title updated successfully." << endl;
+}
+
+void Assignment::setDescription(const string& newDescription) {
+    description = newDescription;
+    cout << "Assignment description updated successfully." << endl;
+}
+
+void Assignment::setDeadline(const string& newDeadline) {
+    deadline = newDeadline;
+    cout << "Assignment deadline updated successfully." << endl;
+}
+
+void Assignment::setIsActive(bool active) {
+    isActive = active;
+    cout << "Assignment status updated successfully." << endl;
+}
+
+void Assignment::setCredits(int newCredits) {
+    credits = newCredits;
+    cout << "Assignment credits updated successfully." << endl;
+}
+
+void Assignment::setMaxScore(double newMaxScore) {
+    maxScore = newMaxScore;
+    cout << "Assignment max score updated successfully." << endl;
+}
+
+// Utility methods - Demonstrates ENCAPSULATION
+void Assignment::displayAssignment() const {
+    cout << "\n=== Assignment Information ===" << endl;
+    cout << "Assignment ID: " << assignmentID << endl;
+    cout << "Title: " << title << endl;
+    cout << "Description: " << description << endl;
+    cout << "Deadline: " << deadline << endl;
+    cout << "Credits: " << credits << endl;
+    cout << "Max Score: " << maxScore << endl;
+    cout << "Status: " << (isActive ? "Active" : "Inactive") << endl;
+    cout << "Submissions: " << submissions.size() << endl;
+    cout << "Deadline Passed: " << (isDeadlinePassed() ? "Yes" : "No") << endl;
+    cout << "=============================" << endl;
+}
+
+void Assignment::displaySubmissions() const {
+    cout << "\n=== Submissions for " << title << " ===" << endl;
+    if (submissions.empty()) {
+        cout << "No submissions yet." << endl;
+    } else {
+        for (const auto& submission : submissions) {
+            submission->displaySubmission();
+        }
+    }
+    cout << "=============================" << endl;
+}
+
+int Assignment::getSubmissionCount() const {
+    return submissions.size();
+}
+
+bool Assignment::hasStudentSubmitted(const string& studentID) const {
+    return any_of(submissions.begin(), submissions.end(),
+        [&studentID](const shared_ptr<Submission>& submission) {
+            return submission->getStudent()->getStudentID() == studentID;
+        });
+}
+
+shared_ptr<Submission> Assignment::getStudentSubmission(const string& studentID) const {
+    auto it = find_if(submissions.begin(), submissions.end(),
+        [&studentID](const shared_ptr<Submission>& submission) {
+            return submission->getStudent()->getStudentID() == studentID;
+        });
+    
+    if (it != submissions.end()) {
+        return *it;
+    }
+    return nullptr;
+}
+
+string Assignment::getCurrentDate() const {
+    auto now = time(nullptr);
+    struct tm tm;
+    localtime_s(&tm, &now);
+    
+    ostringstream oss;
+    oss << put_time(&tm, "%Y-%m-%d %H:%M:%S");
+    return oss.str();
+}
+
+bool Assignment::compareDates(const string& date1, const string& date2) const {
+    // Simple string comparison for dates in YYYY-MM-DD HH:MM:SS format
+    return date1 > date2;
+}
+
+// Static methods - Demonstrates STATIC MEMBERS
+shared_ptr<Assignment> Assignment::createAssignment(const string& title, 
+                                                   const string& description, 
+                                                   const string& deadline) {
+    string assignmentID = "ASS_" + to_string(time(nullptr));
+    return make_shared<Assignment>(assignmentID, title, description, deadline);
+}
+
+// Private helper methods - Demonstrates ENCAPSULATION
+bool Assignment::isValidDate(const string& date) const {
+    // Simple validation - in real implementation, use proper date parsing
+    return date.length() >= 10; // At least YYYY-MM-DD
+}
+
+string Assignment::formatDate(const string& date) const {
+    // Simple formatting - in real implementation, use proper date formatting
+    return date;
+}
+```
+
+---
 
 #### Student.h
 ```cpp
@@ -588,7 +886,7 @@ bool Student::isValidCourse(const shared_ptr<Course>& course) const {
 
 ---
 
-### 3. **Assignment** (Lớp Nghiệp Vụ)
+### 4. **Submission** (Lớp Bài Nộp)
 
 #### Assignment.h
 ```cpp
