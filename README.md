@@ -214,6 +214,9 @@ bool User::verifyPassword(const string& inputPassword) const {
 
 // Lớp Student kế thừa từ User và enable_shared_from_this<Student>
 // -> giúp đối tượng Student có thể tự tạo shared_ptr trỏ đến chính nó.
+// em khai báo lớp Student kế thừa từ User và enable_shared_from_this<Student>.
+enable_shared_from_this cho phép lớp này tự tạo ra con trỏ thông minh shared_ptr trỏ tới chính nó, giúp tránh lỗi bộ nhớ khi cần truy xuất chính đối tượng hiện tại
+
 class Student : public User, public enable_shared_from_this<Student> {
 private:
     string studentID;  // Mã sinh viên
@@ -480,15 +483,22 @@ void Assignment::addSubmission(shared_ptr<Submission> submission) {
     cout << "Submission added to assignment.\n";
 }
 
-// hàm kiểm tra trễ hạn isSubmissionLate:
-// em chuyển chuỗi thời gian dạng "YYYY-MM-DD HH:MM:SS" sang cấu trúc tm
-// rồi dùng mktime để đổi thành kiểu time_t
+
+// Ở đây em định nghĩa hàm này có nhiệm vụ kiểm tra xem bài nộp có bị trễ hạn hay không,
+
 bool Assignment::isSubmissionLate(const string& submissionDate) const {
+// bằng cách so sánh giữa thời gian hạn nộp (deadline) và thời gian sinh viên thực tế nộp (submissionDate)
+// Em khai báo hai cấu trúc tm để lưu thông tin thời gian —một cái dùng cho deadline và một cái cho submission date.
     struct tm tm_deadline = {}, tm_submit = {};
+    // Dấu {} ở đây giúp khởi tạo tất cả các giá trị ban đầu về 0
+    // Em tạo hai luồng chuỗi istringstream để đọc dữ liệu từ các chuỗi thời gian.
     istringstream ss1(deadline), ss2(submissionDate);
+    // Vì deadline và submissionDate đều đang ở dạng chuỗi "YYYY-MM-DD HH:MM:SS
     ss1 >> get_time(&tm_deadline, "%Y-%m-%d %H:%M:%S");
     ss2 >> get_time(&tm_submit, "%Y-%m-%d %H:%M:%S");
+    // get_time() giúp đọc chuỗi thời gian theo đúng định dạng năm–tháng–ngày–giờ–phút–giây
     time_t t1 = mktime(&tm_deadline), t2 = mktime(&tm_submit);
+    // em chuyển hai cấu trúc tm sang kiểu time_t
     return difftime(t2, t1) > 0;
 }
 // Hàm isDeadlinePassed chỉ đơn giản là gọi getCurrentDate() để lấy thời gian hiện tại và kiểm tra xem deadline đã qua chưa:
