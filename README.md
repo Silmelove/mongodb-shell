@@ -96,7 +96,7 @@ public:
     //     - Vì khi ta gọi user->displayMenu(),
     //       chương trình sẽ tự động chọn đúng menu theo loại User.
     // Dòng đầu tiên virtual string getUserType() const = 0; yêu cầu các lớp con phải tự định nghĩa loại người dùng của mình, ví dụ Student, Teacher hoặc Admin
-    // virtual string getUserType() const = 0;
+     virtual string getUserType() const = 0;
     // Dòng thứ hai virtual void displayMenu() = 0; là hàm hiển thị menu riêng cho từng loại người dùng.
 // Việc sử dụng = 0 biến User thành lớp trừu tượng, và điều này thể hiện rõ tính trừu tượng
     virtual void displayMenu() = 0;
